@@ -1,72 +1,122 @@
 package BT12;
+
+import java.util.Arrays;
+
 public class MyList<E> {
-    private int size = 0;
-    static final int DEFAULT_CAPACITY = 10;
-    private Object[] elements;
+    private int size;
+    private final int DEFAULT_CAPACITY = 10;
+    Object elements[];
+
     public MyList() {
+        elements = new Object[DEFAULT_CAPACITY];
     }
+
     public MyList(int capacity) {
-        this.elements = new Object[capacity];
-        this.size = 0;
+        elements = new Object[capacity];
     }
-    public void add(int index, E item) {
-        add(index,item);
-    }
-    public E remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
+
+    void add(int index, E element){
+        if (index<0||index>size){
+            throw new  IndexOutOfBoundsException("Index: "+index+", Size: "+size);
+        }else {
+            if (size==elements.length){
+                // tăng kích thước mảng lên
+                Object[] newElements = new Object[size+1];
+                for (int i = 0; i < elements.length; i++) {
+                    newElements[i] = elements[i];
+                }
+                elements = newElements;
+            }
+            for (int i = elements.length-1; i >=0; i--) {
+                if(i>index){
+                    elements[i] = elements[i-1];
+                }
+                if (i==index){
+                    elements[i] = element;
+                }
+            }
+            size++;
         }
-        E removedElement = (E) elements[index];
-        for (int i = index; i < size - 1; i++) {
-            elements[i] = elements[i + 1];
-        }
-        elements[--size] = null;
-        return removedElement;
     }
-    public int size() {
+    E remove(int index){
+        if (index<0||index>size){
+            throw new  IndexOutOfBoundsException("Index: "+index+", Size: "+size);
+        }else {
+            Object temp = elements[index];
+            for (int i = 0; i < elements.length-1; i++) {
+                if(i>=index){
+                    elements[i] = elements[i+1];
+                }
+            }
+            elements[elements.length-1]=null;
+            size--;
+            return (E) temp;
+        }
+    }
+    int size(){
         return size;
     }
-    public MyList<E> clone() {
-        MyList<E> cloneList = new MyList<>();
-        cloneList.size = this.size;
-        System.arraycopy(this.elements, 0, cloneList.elements, 0, this.size);
-        return cloneList;
+
+    Object cloneList(){
+        return elements;
     }
-    public boolean contains(E o) {
-        for (int i = 0; i < size; i++)
-            if (o.equals(elements[i])) return true;
-        return false;
+    boolean contains(E e){
+        for (Object o : elements) {
+            if(o !=null && o.equals(e)){
+                return true;
+            }
+        }
+        return  false;
     }
-    public int indexOf(E o) {
-        for (int i = 0; i < size; i++)
-            if (o.equals(elements[i])) return i;
+    int indexOf(E o){
+        for (int i = 0; i < elements.length-1; i++) {
+            if(elements[i].equals(o)){
+                return i;
+            }
+        }
         return -1;
     }
-    public boolean add(E e){
-        if (size == elements.length) {
-            ensureCapacity(10);
+    boolean add(E e){
+        if (size==elements.length){
+            // tăng kích thước mảng lên
+            Object[] newElements = new Object[size+1];
+            for (int i = 0; i < elements.length; i++) {
+                newElements[i] = elements[i];
+            }
+            elements = newElements;
         }
-        elements[size++] = e;
+        // thêm vàocuối
+        elements[size] = e;
+        size++;
         return true;
-    };
-    public  void ensureCapacity(int minCapacity){
-        if (elements.length < minCapacity) {
+    }
+    void ensureCapacity(int minCapacity){
+        if (minCapacity > elements.length){
             Object[] newElements = new Object[minCapacity];
-            System.arraycopy(elements, 0, newElements, 0, size);
+            for (int i = 0; i < elements.length; i++) {
+                newElements[i] = elements[i];
+            }
             elements = newElements;
         }
     }
-    public E get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
+    E get(int index){
+        if (index<0||index>size){
+            throw new  IndexOutOfBoundsException("Index: "+index+", Size: "+size);
         }
-        return (E) elements[index];
+        for (int i = 0; i < elements.length-1; i++) {
+            if(i==index){
+                return (E) elements[i];
+            }
+        }
+        return null;
     }
-    public void clear(){
-            elements = (E[])new Object[DEFAULT_CAPACITY];
-            size = 0;
+    void clear(){
+        elements = new Object[0];
+        size = 0;
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(elements);
     }
 }
-
-
-
